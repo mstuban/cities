@@ -1,3 +1,9 @@
+spring:
+  datasource:
+    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:12.1://localhost:5432/cities
+    username: photomath
+    password: photomath
 server:
   port: 8080
 jwt:
