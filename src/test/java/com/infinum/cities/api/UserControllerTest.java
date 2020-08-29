@@ -8,7 +8,7 @@ import com.infinum.cities.service.UserService;
 import com.infinum.cities.stub.CityStubFactory;
 import com.infinum.cities.stub.UserStubFactory;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,7 +49,7 @@ public class UserControllerTest {
             )*/
     }
 
-    @Ignore
+    @Test
     public void testModifyFavoriteCitiesWhenAdd() throws Exception {
         // prepare ...
         when(cityService.findByName("New York")).thenReturn(java.util.Optional.of(CityStubFactory.mockCities.get(2)));

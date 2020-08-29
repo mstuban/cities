@@ -22,7 +22,7 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "Register new user with email and password and receive JWT token")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping(value = "/register")
     public ResponseEntity<?> register(
         @Valid @RequestBody AuthenticationRequest authRequest
     ) throws Exception {
@@ -31,7 +31,7 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "Login existing user with with email and password and receive JWT token")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping(value = "/login")
     public ResponseEntity<?> login(
         @Valid @RequestBody AuthenticationRequest authRequest
     ) throws Exception {
