@@ -66,7 +66,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/actuator/**").permitAll()
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/city/**").permitAll()
-            .antMatchers("/api/user/**").permitAll()
             .antMatchers("/swagger-ui.html").permitAll()
             .antMatchers("/webjars/**").permitAll()
             .antMatchers("/swagger-resources/**").permitAll()

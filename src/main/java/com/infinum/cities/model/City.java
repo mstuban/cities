@@ -49,6 +49,12 @@ public class City {
     @Column(name = "number_of_favorites")
     private Integer numberOfFavorites = 0;
 
+    public City(String name, Integer population, String description) {
+        this.name = name;
+        this.population = population;
+        this.description = description;
+    }
+
     @PrePersist
     public void createNewCity() {
         created = LocalDateTime.now();
