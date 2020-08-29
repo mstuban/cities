@@ -7,7 +7,7 @@ CREATE TABLE city
     population          INTEGER            NOT NULL,
     description         TEXT               NOT NULL,
     created             timestamptz        NOT NULL,
-    number_of_favorites INTEGER            NOT NULL
+    number_of_favorites INTEGER NOT NULL DEFAULT 0
 );
 
 INSERT INTO city (city_id, name, population, description, created, number_of_favorites)

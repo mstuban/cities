@@ -47,7 +47,7 @@ public class City {
     // number displaying how many users marked this city as favorite
     @JsonFormat(pattern = DATE_TIME_FORMAT)
     @Column(name = "number_of_favorites")
-    private Integer numberOfFavorites;
+    private Integer numberOfFavorites = 0;
 
     @PrePersist
     public void createNewCity() {
