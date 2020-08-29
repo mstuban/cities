@@ -28,26 +28,17 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repository.findByEmail(email).orElse(
-            createUser(email)
-        );
-    }
-
-    public User createUser(String email) throws UsernameNotFoundException {
-        return repository.save(
-            new User(
-                email
-            )
-        );
-    }
-
-    public boolean existsByEmail(String email) {
-        return repository.existsByEmail(email);
-    }
-
-    public User findByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(
             () -> new UserNotFoundException("User " + email + " not found")
+        );
+    }
+
+    public User save(String email, String password) throws UsernameNotFoundException {
+        return repository.save(
+            new User(
+                email,
+                password
+            )
         );
     }
 

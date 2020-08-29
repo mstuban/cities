@@ -3,6 +3,7 @@ package com.infinum.cities.api.handlers;
 import com.infinum.cities.exception.CityNotFoundException;
 import com.infinum.cities.exception.UserNotFoundException;
 import com.infinum.cities.model.errors.ErrorMessage;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,17 @@ class GlobalExceptionHandler {
                 LocalDateTime.now()
             ),
             HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorMessage> handleMalformedJwtException(MalformedJwtException e) {
+        return new ResponseEntity<>(
+            new ErrorMessage(
+                HttpStatus.UNAUTHORIZED.value(),
+                e.getMessage(),
+                LocalDateTime.now()
+            ),
+            HttpStatus.UNAUTHORIZED);
     }
 
 }

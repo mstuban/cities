@@ -27,9 +27,12 @@ public class CityControllerTest {
 
     private static final Long EXISTING_CITY_ID = 1L;
     private static final Long NON_EXISTING_CITY_ID = 999999L;
+
     @Mock
     private CityService service;
+
     private CityController controller;
+
     private MockMvc mockMvc;
 
     @Before
