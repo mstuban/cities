@@ -1,2 +1,2 @@
 # cities
-City database
+com.infinum.cities.model.City database
