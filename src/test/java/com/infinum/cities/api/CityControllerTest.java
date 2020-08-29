@@ -1,9 +1,7 @@
 package com.infinum.cities.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infinum.cities.exception.CityNotFoundException;
 import com.infinum.cities.model.City;
-import com.infinum.cities.repository.CityRepository;
 import com.infinum.cities.service.CityService;
 import com.infinum.cities.stub.CityStubFactory;
 import com.infinum.cities.utils.JsonUtil;
@@ -31,18 +29,14 @@ public class CityControllerTest {
     private static final Long NON_EXISTING_CITY_ID = 999999L;
     @Mock
     private CityService service;
-    @Mock
-    private CityRepository repository;
     private CityController controller;
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         controller = new CityController(service);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
