@@ -53,10 +53,10 @@ public class CityControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", notNullValue()))
             .andExpect(jsonPath("$", hasSize(3)))
-            .andExpect(jsonPath("$[0].id").value("1"))
-            .andExpect(jsonPath("$[0].name").value("New York"))
-            .andExpect(jsonPath("$[0].population").value(2000000))
-            .andExpect(jsonPath("$[0].description").value("New York"));
+            .andExpect(jsonPath("$[0].id").value(2L))
+            .andExpect(jsonPath("$[0].name").value("Chicago"))
+            .andExpect(jsonPath("$[0].population").value(1000000))
+            .andExpect(jsonPath("$[0].description").value("Chicago"));
     }
 
     @Test
