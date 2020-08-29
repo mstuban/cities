@@ -2,6 +2,7 @@ package com.infinum.cities.api;
 
 import com.infinum.cities.model.auth.AuthenticationRequest;
 import com.infinum.cities.model.auth.AuthenticationResponse;
+import com.infinum.cities.model.enums.AuthOperation;
 import com.infinum.cities.service.AuthenticationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import javax.validation.Valid;
 
 @CrossOrigin
 @RestController
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -19,17 +21,21 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @ApiOperation(value = "Authenticate new / existing with email and password and receive JWT token")
-    @RequestMapping(value = "/api/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(
-        @Valid @RequestBody AuthenticationRequest authenticationRequest
+    @ApiOperation(value = "Register new user with email and password and receive JWT token")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<?> register(
+        @Valid @RequestBody AuthenticationRequest authRequest
     ) throws Exception {
-        String token = authenticationService.authenticate(
-            authenticationRequest,
-            authenticationRequest.getEmail(),
-            authenticationRequest.getPassword()
-        );
+        String token = authenticationService.authenticate(authRequest, AuthOperation.register);
+        return ResponseEntity.ok(new AuthenticationResponse(token));
+    }
 
+    @ApiOperation(value = "Login existing user with with email and password and receive JWT token")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<?> login(
+        @Valid @RequestBody AuthenticationRequest authRequest
+    ) throws Exception {
+        String token = authenticationService.authenticate(authRequest, AuthOperation.login);
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 }

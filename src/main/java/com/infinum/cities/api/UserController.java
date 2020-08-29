@@ -1,7 +1,7 @@
 package com.infinum.cities.api;
 
 import com.infinum.cities.model.User;
-import com.infinum.cities.model.dto.PatchOperation;
+import com.infinum.cities.model.enums.PatchOperation;
 import com.infinum.cities.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;

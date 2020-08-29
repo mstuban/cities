@@ -1,7 +1,7 @@
 package com.infinum.cities.api;
 
 import com.infinum.cities.auth.util.TokenUtil;
-import com.infinum.cities.model.dto.PatchOperation;
+import com.infinum.cities.model.enums.PatchOperation;
 import com.infinum.cities.service.AuthenticationService;
 import com.infinum.cities.service.CityService;
 import com.infinum.cities.service.UserService;

@@ -1,9 +1,13 @@
 package com.infinum.cities.service;
 
 import com.infinum.cities.auth.util.TokenUtil;
-import com.infinum.cities.exception.UserNotFoundException;
+import com.infinum.cities.exception.PatchOperationNotFoundException;
 import com.infinum.cities.model.auth.AuthenticationRequest;
-import org.springframework.security.authentication.*;
+import com.infinum.cities.model.enums.AuthOperation;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,31 +34,44 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String authenticate(
-        AuthenticationRequest authenticationRequest,
-        String email,
-        String password
-    ) throws Exception {
-        boolean userExists = true;
+    public String authenticate(AuthenticationRequest authRequest, AuthOperation authOp) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    authRequest.getEmail(),
+                    authRequest.getPassword())
+            );
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
-        } catch (InternalAuthenticationServiceException e) {
-            if (e.getCause() instanceof UserNotFoundException) {
-                userExists = false;
-            }
         }
 
         UserDetails userDetails;
-        if (userExists) {
-            userDetails = userService.loadUserByUsername(authenticationRequest.getEmail());
-        } else {
-            userDetails = userService.save(email, passwordEncoder.encode(password));
+        switch (authOp) {
+            case register:
+                userDetails = registerUser(authRequest);
+                break;
+            case login:
+                userDetails = loginUser(authRequest);
+                break;
+            default:
+                throw new PatchOperationNotFoundException(
+                    "Patch operation " + authOp + " not found"
+                );
         }
 
         return tokenUtil.generateToken(userDetails);
+    }
+
+    private UserDetails registerUser(AuthenticationRequest authenticationRequest) {
+        return userService.save(
+            authenticationRequest.getEmail(),
+            passwordEncoder.encode(authenticationRequest.getPassword())
+        );
+    }
+
+    private UserDetails loginUser(AuthenticationRequest authenticationRequest) {
+        return userService.loadUserByUsername(authenticationRequest.getEmail());
     }
 }

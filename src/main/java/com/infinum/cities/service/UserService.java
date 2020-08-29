@@ -5,13 +5,14 @@ import com.infinum.cities.exception.PatchOperationNotFoundException;
 import com.infinum.cities.exception.UserNotFoundException;
 import com.infinum.cities.model.City;
 import com.infinum.cities.model.User;
-import com.infinum.cities.model.dto.PatchOperation;
+import com.infinum.cities.model.enums.PatchOperation;
 import com.infinum.cities.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.transaction.Transactional;
 
 @Service
@@ -33,7 +34,10 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public User save(String email, String password) throws UsernameNotFoundException {
+    public User save(String email, String password) {
+        if (repository.findByEmail(email).isPresent()) {
+            throw new EntityExistsException("User " + email + " already exists");
+        }
         return repository.save(
             new User(
                 email,
