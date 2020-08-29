@@ -35,6 +35,8 @@ public class AuthenticationService {
     }
 
     public String authenticate(AuthenticationRequest authRequest, AuthOperation authOp) throws Exception {
+        UserDetails userDetails = processAuthRequest(authRequest, authOp);
+
         try {
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -47,21 +49,20 @@ public class AuthenticationService {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
 
-        UserDetails userDetails;
+        return tokenUtil.generateToken(userDetails);
+    }
+
+    private UserDetails processAuthRequest(AuthenticationRequest authRequest, AuthOperation authOp) {
         switch (authOp) {
             case register:
-                userDetails = registerUser(authRequest);
-                break;
+                return registerUser(authRequest);
             case login:
-                userDetails = loginUser(authRequest);
-                break;
+                return loginUser(authRequest);
             default:
                 throw new PatchOperationNotFoundException(
                     "Patch operation " + authOp + " not found"
                 );
         }
-
-        return tokenUtil.generateToken(userDetails);
     }
 
     private UserDetails registerUser(AuthenticationRequest authenticationRequest) {
