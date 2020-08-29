@@ -9,3 +9,7 @@ spring:
     platform: postgres
 jwt:
   secret: infinum
+management:
+  endpoint:
+    flyway:
+      enabled: false
