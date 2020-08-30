@@ -1,6 +1,5 @@
 package com.infinum.cities.api;
 
-import com.infinum.cities.exception.CityNotFoundException;
 import com.infinum.cities.model.City;
 import com.infinum.cities.service.CityService;
 import com.infinum.cities.stub.CityStubFactory;
@@ -28,9 +27,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class CityControllerTest {
-
-    private static final Long EXISTING_CITY_ID = 1L;
-    private static final Long NON_EXISTING_CITY_ID = 999999L;
 
     @Mock
     private CityService service;
@@ -74,36 +70,6 @@ public class CityControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", notNullValue()))
             .andExpect(jsonPath("$", hasSize(0)));
-    }
-
-    @Test
-    public void testRetrieveCityByIdWhenItExists() throws Exception {
-        // prepare ...
-        when(service.findById(EXISTING_CITY_ID)).thenReturn(CityStubFactory.mockCities.get(0));
-
-        // act & assert ...
-        mockMvc.perform(get("/api/city/" + EXISTING_CITY_ID))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$", notNullValue()))
-            .andExpect(jsonPath("$.id").value("1"))
-            .andExpect(jsonPath("$.name").value("New York"))
-            .andExpect(jsonPath("$.population").value(2000000))
-            .andExpect(jsonPath("$.description").value("New York"));
-    }
-
-    @Test
-    public void testRetrieveCityByIdWhenItDoesNotExist() throws Exception {
-        // prepare ...
-        when(service.findById(NON_EXISTING_CITY_ID)).thenThrow(
-            new CityNotFoundException(
-                "City " + NON_EXISTING_CITY_ID + " not found"
-            )
-        );
-
-        // act & assert ...
-        mockMvc.perform(get("/api/city/" + NON_EXISTING_CITY_ID))
-            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -184,8 +150,6 @@ public class CityControllerTest {
 
     @Test
     public void testSaveWhenFieldsAreMissing() throws Exception {
-        // prepare ...
-
         // act & assert ...
         mockMvc.perform(
             post("/api/city/save")

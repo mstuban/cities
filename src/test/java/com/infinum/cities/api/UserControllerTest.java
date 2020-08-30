@@ -43,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
 @Import({SecurityTestConfiguration.class})
 public class UserControllerTest {
+
     @Mock
     private UserService service;
 
@@ -54,9 +55,6 @@ public class UserControllerTest {
 
     @Mock
     private TokenUtil tokenUtil;
-
-    @Mock
-    private User user;
 
     private UserController controller;
 

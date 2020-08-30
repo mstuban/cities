@@ -1,6 +1,5 @@
 package com.infinum.cities.service;
 
-import com.infinum.cities.exception.CityNotFoundException;
 import com.infinum.cities.model.City;
 import com.infinum.cities.repository.CityRepository;
 import org.springframework.stereotype.Service;
@@ -15,12 +14,6 @@ public class CityService {
 
     public CityService(CityRepository repository) {
         this.repository = repository;
-    }
-
-    public City findById(Long id) {
-        return repository.findById(id).orElseThrow(
-            () -> new CityNotFoundException("City " + id + " not found")
-        );
     }
 
     public Iterable<City> findAll() {
