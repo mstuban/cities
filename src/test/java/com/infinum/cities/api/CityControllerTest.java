@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 
 import javax.persistence.EntityExistsException;
@@ -27,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class CityControllerTest extends AuthMvcTest {
+public class CityControllerTest {
 
     @Mock
     private CityService service;
@@ -36,6 +38,8 @@ public class CityControllerTest extends AuthMvcTest {
 
     @Mock
     private TokenUtil tokenUtil;
+
+    private MockMvc mockMvc;
 
     private String token;
 
@@ -49,6 +53,7 @@ public class CityControllerTest extends AuthMvcTest {
                 AuthenticationRequestStubFactory.authRequest.getPassword()
             )
         );
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
