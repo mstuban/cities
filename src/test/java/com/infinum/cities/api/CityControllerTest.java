@@ -7,42 +7,32 @@ import com.infinum.cities.service.CityService;
 import com.infinum.cities.stub.AuthenticationRequestStubFactory;
 import com.infinum.cities.stub.CityStubFactory;
 import com.infinum.cities.utils.JsonUtil;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 
 import javax.persistence.EntityExistsException;
 import java.util.Collections;
 
-import static io.jsonwebtoken.Jwts.claims;
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class CityControllerTest {
+public class CityControllerTest extends AuthMvcTest {
 
     @Mock
     private CityService service;
 
     private CityController controller;
-
-    private MockMvc mockMvc;
 
     @Mock
     private TokenUtil tokenUtil;
@@ -53,7 +43,6 @@ public class CityControllerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         controller = new CityController(service);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         token = tokenUtil.generateToken(
             new User(
                 AuthenticationRequestStubFactory.authRequest.getEmail(),
@@ -144,88 +133,6 @@ public class CityControllerTest {
             .andExpect(jsonPath("$[2].name").value("Chicago"))
             .andExpect(jsonPath("$[2].population").value(1000000))
             .andExpect(jsonPath("$[2].description").value("Chicago"));
-    }
-
-    @Test
-    public void testSave() throws Exception {
-        // prepare ...
-        when(service.save(CityStubFactory.mockCity)).thenReturn(CityStubFactory.persistedMockCity);
-
-        // act & assert ...
-        mockMvc.perform(
-            post("/api/city/save")
-                .content(
-                    JsonUtil.toJson(CityStubFactory.mockCity)
-                )
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$", notNullValue()))
-            .andExpect(jsonPath("$.id").value("1"))
-            .andExpect(jsonPath("$.name").value("Los Angeles"))
-            .andExpect(jsonPath("$.population").value(500000))
-            .andExpect(jsonPath("$.description").value("Los Angeles"));
-    }
-
-    @Test
-    public void testSaveWhenTokenInvalid() {
-        // prepare ...
-        when(service.save(CityStubFactory.mockCity)).thenThrow(
-            new MalformedJwtException(
-                "JWT strings must contain exactly 2 period characters. Found: 0"
-            )
-        );
-
-        // act & assert ...
-        Exception exception = assertThrows(NestedServletException.class, () ->
-            mockMvc.perform(
-                post("/api/city/save")
-                    .content(
-                        JsonUtil.toJson(CityStubFactory.mockCity)
-                    )
-                    .header("Authorization", "Bearer " + "INVALID_TOKEN")
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-                .andExpect(status().isUnauthorized())
-        );
-
-        assertTrue(exception.getCause() instanceof MalformedJwtException);
-    }
-
-    @Test
-    @WithMockUser("johnny.cash@gmail.com")
-    public void testSaveWhenTokenHasExpired() {
-        // prepare ...
-        when(tokenUtil.validateToken(any(), any())).thenThrow(
-            new ExpiredJwtException(
-                Jwts.header(),
-                claims(),
-                "JWT Token has expired")
-        );
-        when(service.save(CityStubFactory.mockCity)).thenThrow(
-            new ExpiredJwtException(
-                Jwts.header(),
-                claims(),
-                "JWT strings must contain exactly 2 period characters. Found: 0"
-            )
-        );
-
-        // act & assert ...
-        Exception exception = assertThrows(NestedServletException.class, () ->
-            mockMvc.perform(
-                post("/api/city/save")
-                    .content(
-                        JsonUtil.toJson(CityStubFactory.mockCity)
-                    )
-                    .header("Authorization", "Bearer " + "INVALID_TOKEN")
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-                .andExpect(status().isUnauthorized())
-        );
-
-        assertTrue(exception.getCause() instanceof ExpiredJwtException);
     }
 
     @Test
