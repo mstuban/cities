@@ -86,5 +86,4 @@ class GlobalExceptionHandler {
             ),
             HttpStatus.BAD_REQUEST);
     }
-
 }

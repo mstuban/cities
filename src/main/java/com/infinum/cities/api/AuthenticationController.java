@@ -5,6 +5,7 @@ import com.infinum.cities.model.auth.AuthenticationResponse;
 import com.infinum.cities.model.enums.AuthOperation;
 import com.infinum.cities.service.AuthenticationService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,21 +22,16 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @ApiOperation(value = "Register new user with email and password and receive JWT token")
-    @PostMapping(value = "/register")
-    public ResponseEntity<?> register(
-        @Valid @RequestBody AuthenticationRequest authRequest
+    @ApiOperation(value =
+        "Register new user with email and password and receive JWT token / " +
+            "Login existing user with email and password and receive JWT token"
+    )
+    @PostMapping(value = "/{authOp}")
+    public ResponseEntity<?> authenticate(
+        @Valid @RequestBody AuthenticationRequest authRequest,
+        @ApiParam(value = "register / login", required = true) @PathVariable AuthOperation authOp
     ) throws Exception {
-        String token = authenticationService.authenticate(authRequest, AuthOperation.register);
-        return ResponseEntity.ok(new AuthenticationResponse(token));
-    }
-
-    @ApiOperation(value = "Login existing user with with email and password and receive JWT token")
-    @PostMapping(value = "/login")
-    public ResponseEntity<?> login(
-        @Valid @RequestBody AuthenticationRequest authRequest
-    ) throws Exception {
-        String token = authenticationService.authenticate(authRequest, AuthOperation.login);
+        String token = authenticationService.authenticate(authRequest, authOp);
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 }
