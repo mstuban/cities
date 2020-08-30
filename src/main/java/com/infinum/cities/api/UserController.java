@@ -6,9 +6,8 @@ import com.infinum.cities.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @CrossOrigin
 @RestController
@@ -26,14 +25,16 @@ public class UserController {
     @PatchMapping("/favorite-cities/{op}/{city-name}")
     public ResponseEntity<User> modifyFavoriteCities(
         @PathVariable PatchOperation op,
-        @PathVariable("city-name") String cityName,
-        Principal principal
+        @PathVariable("city-name") String cityName
     ) {
         return ResponseEntity.ok(
             service.modifyFavoriteCities(
                 op,
                 cityName,
-                principal.getName()
+                SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getName()
             ));
     }
 }

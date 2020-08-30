@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User modifyFavoriteCities(PatchOperation op, String cityName, String userEmail) {
         City city = cityService.findByName(cityName).orElseThrow(
-            () -> new CityNotFoundException("City" + cityName + " not found")
+            () -> new CityNotFoundException("City " + cityName + " not found")
         );
 
         User currentUser = repository.findByEmail(userEmail).orElseThrow(

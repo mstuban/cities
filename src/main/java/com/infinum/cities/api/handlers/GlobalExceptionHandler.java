@@ -1,5 +1,6 @@
 package com.infinum.cities.api.handlers;
 
+import com.infinum.cities.exception.CannotAddCityException;
 import com.infinum.cities.exception.CityNotFoundException;
 import com.infinum.cities.exception.UserNotFoundException;
 import com.infinum.cities.model.errors.ErrorMessage;
@@ -40,7 +41,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorMessage> handleException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorMessage> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return new ResponseEntity<>(
             new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
@@ -72,6 +73,18 @@ class GlobalExceptionHandler {
                 LocalDateTime.now()
             ),
             HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorMessage> handleCannotAddCityException(CannotAddCityException e) {
+        return new ResponseEntity<>(
+            new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                e.getMessage(),
+                LocalDateTime.now()
+            ),
+            HttpStatus.BAD_REQUEST);
     }
 
 }
