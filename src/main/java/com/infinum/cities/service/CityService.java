@@ -5,6 +5,7 @@ import com.infinum.cities.model.City;
 import com.infinum.cities.repository.CityRepository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.Optional;
 
 @Service
@@ -31,6 +32,10 @@ public class CityService {
     }
 
     public City save(City city) {
+        if (repository.existsByName(city.getName())) {
+            throw new EntityExistsException("City " + city.getName() + " already exists");
+        }
+
         return repository.save(city);
     }
 

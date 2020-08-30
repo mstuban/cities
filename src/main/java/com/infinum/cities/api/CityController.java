@@ -44,7 +44,7 @@ public class CityController {
     }
 
     @ApiOperation(value = "Save new city")
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<City> save(@Valid @RequestBody City city) {
         return ResponseEntity.ok(service.save(city));
     }

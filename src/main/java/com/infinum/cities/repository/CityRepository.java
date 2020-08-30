@@ -15,4 +15,6 @@ public interface CityRepository extends CrudRepository<City, Long> {
     Optional<City> findByName(String name);
 
     Collection<City> findByOrderByNumberOfFavoritesAsc();
+
+    boolean existsByName(String name);
 }

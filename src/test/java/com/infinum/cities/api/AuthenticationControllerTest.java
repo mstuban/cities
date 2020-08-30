@@ -21,6 +21,7 @@ import static com.infinum.cities.utils.JsonUtil.toJson;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -88,12 +89,13 @@ public class AuthenticationControllerTest {
             );
 
         // act & assert ...
-        assertThrows(NestedServletException.class, () -> mockMvc.perform(
+        Exception exception = assertThrows(NestedServletException.class, () -> mockMvc.perform(
             post("/api/auth/register")
                 .content(toJson(AuthenticationRequestStubFactory.authRequest))
                 .contentType(MediaType.APPLICATION_JSON)
             )
         );
+        assertTrue(exception.getCause() instanceof EntityExistsException);
     }
 
     @Test

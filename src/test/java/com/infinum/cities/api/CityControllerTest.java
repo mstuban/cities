@@ -12,12 +12,16 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 
+import javax.persistence.EntityExistsException;
 import java.util.Collections;
 
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -163,7 +167,7 @@ public class CityControllerTest {
 
         // act & assert ...
         mockMvc.perform(
-            post("/api/city")
+            post("/api/city/save")
                 .content(
                     JsonUtil.toJson(CityStubFactory.mockCity)
                 )
@@ -184,12 +188,34 @@ public class CityControllerTest {
 
         // act & assert ...
         mockMvc.perform(
-            post("/api/city")
+            post("/api/city/save")
                 .content(
                     JsonUtil.toJson(CityStubFactory.invalidMockCity)
                 )
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testSaveWhenAlreadyExistsByName() throws Exception {
+        // prepare ...
+        when(service.save(CityStubFactory.mockCity))
+            .thenThrow(
+                new EntityExistsException(
+                    "City " + CityStubFactory.mockCity.getName() + " already exists"
+                )
+            );
+
+        // act & assert ...
+        Exception exception = assertThrows(NestedServletException.class, () -> mockMvc.perform(
+            post("/api/city/save")
+                .content(
+                    JsonUtil.toJson(CityStubFactory.mockCity)
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+        );
+        assertTrue(exception.getCause() instanceof EntityExistsException);
     }
 }
