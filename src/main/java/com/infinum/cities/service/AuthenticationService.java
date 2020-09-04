@@ -34,45 +34,24 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String authenticate(AuthenticationRequest authRequest, AuthOperation authOp) throws Exception {
-        UserDetails userDetails = processAuthRequest(authRequest, authOp);
+    public String authenticate(AuthenticationRequest authRequest, AuthOperation authOp) {
+        if (authOp == AuthOperation.register) {
+            createUser(authRequest);
+        }
 
-        try {
-            authenticationManager.authenticate(
+        UserDetails userDetails = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     authRequest.getEmail(),
                     authRequest.getPassword())
             );
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
 
         return tokenUtil.generateToken(userDetails);
     }
 
-    private UserDetails processAuthRequest(AuthenticationRequest authRequest, AuthOperation authOp) {
-        switch (authOp) {
-            case register:
-                return registerUser(authRequest);
-            case login:
-                return loginUser(authRequest);
-            default:
-                throw new PatchOperationNotFoundException(
-                    "Patch operation " + authOp + " not found"
-                );
-        }
-    }
-
-    private UserDetails registerUser(AuthenticationRequest authenticationRequest) {
+    private UserDetails createUser(AuthenticationRequest authenticationRequest) {
         return userService.save(
             authenticationRequest.getEmail(),
             passwordEncoder.encode(authenticationRequest.getPassword())
         );
-    }
-
-    private UserDetails loginUser(AuthenticationRequest authenticationRequest) {
-        return userService.loadUserByUsername(authenticationRequest.getEmail());
     }
 }
